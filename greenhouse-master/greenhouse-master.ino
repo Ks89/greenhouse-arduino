@@ -9,21 +9,23 @@
 // include the SD library
 #include <SPI.h>
 #include <SD.h>
+// Required by Bluetooth module
+#include <SoftwareSerial.h>
 
 const int lightSensorPin = A0;
 
-const int relayNeon1Pin = 5;
-const int relayNeon2Pin = 6;
-const int relayFanPin = 7;
-const int relayHumidifierPin = 8;
-const int relayHeaterPin = 9;
+const int relayNeon1Pin = 22;
+const int relayNeon2Pin = 24;
+const int relayFanPin = 26;
+const int relayHumidifierPin = 28;
+const int relayHeaterPin = 30;
 
-boolean relayFanToggle = false;
-boolean relayHumidifierToggle = false;
+boolean relayFanToggle = true;
+boolean relayHumidifierToggle = true;
 
 int lightValue;
 
-#define DHT22_PIN 10
+#define DHT22_PIN 32
 dht DHT;
 
 #include "arduino_secrets.h" 
@@ -31,7 +33,10 @@ dht DHT;
 char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 int status = WL_IDLE_STATUS;     // the WiFi radio's status
-
+// Initialize the Ethernet client library
+// with the IP address and port of the server
+// that you want to connect to (port 80 is default for HTTP):
+WiFiClient client;
 
 // set up variables using the SD utility library functions:
 Sd2Card card;
@@ -58,6 +63,10 @@ void setup() {
   pinMode(relayHumidifierPin, OUTPUT);
   pinMode(relayHeaterPin, OUTPUT);
 
+  // I don't know if this is necessary for sd card
+  // In case of errors, please enable it
+  // pinMode(4,OUTPUT);
+
   setTime(1, 23, 00, 22, 3, 18); // set time (FIXME replace with a real time)
 
   Alarm.alarmRepeat(1, 23, 20, enableNeons); // FIXME change to 7:30am
@@ -68,43 +77,20 @@ void setup() {
   Alarm.timerRepeat(3, readDht);
   Alarm.timerRepeat(3, readLight);
 
-  // ------------------------------
-  // ----------- Wifi -------------
-  // ------------------------------
-  // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
-    // don't continue:
-    while (true);
-  }
+  // force heater always on, because managed by an internal thermostat
+  digitalWrite(relayHeaterPin, HIGH);
 
-  // attempt to connect to WiFi network:
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to WPA SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network:
-    status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-    delay(10000);
-  }
-
-  // you're connected now, so print out the data:
-  Serial.print("You're connected to the network");
-  printCurrentNet();
-  printWiFiData();
-  // ------------------------------
-  // ------------------------------
-  // ------------------------------
-
+  // enable SD SPI
+  digitalWrite(chipSelect, LOW);
 
   // ------------------------------
   // ----------- SD card ----------
   // ------------------------------
   getSdCardData();
-  if (!SD.begin(4)) {
+  while (!SD.begin(chipSelect)) {
     Serial.println("initialization sdcard failed!");
-    while (1);
+    delay(1000);
+    // while (1);
   }
   Serial.println("initialization sdcard done.");
 
@@ -138,6 +124,49 @@ void setup() {
   } else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
+  }
+  // ------------------------------
+  // ------------------------------
+  // ------------------------------
+
+  // disable SD SPI
+  digitalWrite(chipSelect, HIGH);
+
+  // ------------------------------
+  // ----------- Wifi -------------
+  // ------------------------------
+  // check for the presence of the shield:
+  if (WiFi.status() == WL_NO_SHIELD) {
+    Serial.println("WiFi shield not present");
+    // don't continue:
+    while (true);
+  }
+
+  // attempt to connect to WiFi network:
+  while ( status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to WPA SSID: ");
+    Serial.println(ssid);
+    // Connect to WPA/WPA2 network:
+    status = WiFi.begin(ssid, pass);
+
+    // wait 10 seconds for connection:
+    delay(10000);
+  }
+
+  // you're connected now, so print out the data:
+  Serial.print("You're connected to the network");
+  printCurrentNet();
+  printWiFiData();
+  Serial.println("\nStarting connection to server...");
+  // if you get a connection, report back via serial:
+  char server[] = "http://api.openweathermap.org";
+  if (client.connect(server, 80)) {
+    Serial.println("connected to server");
+    // Make a HTTP request:
+    client.println("GET /data/2.5/weather?q=paderno&APPID=7c15db211783f681d69a8b0a46913857 HTTP/1.1");
+    client.println("Host: api.openweathermap.org");
+    client.println("Connection: close");
+    client.println();
   }
   // ------------------------------
   // ------------------------------
@@ -183,7 +212,7 @@ void disableNeons() {
 
 void updateFan() {
   if (relayFanToggle == true) {
-    digitalWrite(relayFanPin, HIGH);
+    digitalWrite(relayFanPin, LOW);
     relayFanToggle = false;
   }
   else {
@@ -194,7 +223,7 @@ void updateFan() {
 
 void updateHumidifier() {
   if (relayHumidifierToggle == true) {
-    digitalWrite(relayHumidifierPin, HIGH);
+    digitalWrite(relayHumidifierPin, LOW);
     relayHumidifierToggle = false;
   }
   else {
