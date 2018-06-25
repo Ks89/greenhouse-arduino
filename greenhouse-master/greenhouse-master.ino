@@ -1,16 +1,18 @@
+// include common libs
+#include <SPI.h>
 // include the DHT library
 #include <dht.h>
 // include the TimeAlarms library
 #include <Time.h>
 #include <TimeAlarms.h>
 // include the WiFi library
-#include <SPI.h>
 #include <WiFi101.h>
 // include the SD library
-#include <SPI.h>
 #include <SD.h>
 // Required by Bluetooth module
 #include <SoftwareSerial.h>
+// include json library (https://github.com/bblanchon/ArduinoJson)
+#include <ArduinoJson.h>
 
 const int lightSensorPin = A0;
 
@@ -28,11 +30,16 @@ int lightValue;
 #define DHT22_PIN 32
 dht DHT;
 
-#include "arduino_secrets.h" 
+#include "arduino_secrets.h"
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
-int status = WL_IDLE_STATUS;     // the WiFi radio's status
+int keyIndex = 0;            // your network key Index number (needed only for WEP)
+int status = WL_IDLE_STATUS;
+// if you don't want to use DNS (and reduce your sketch size)
+// use the numeric IP instead of the name for the server:
+IPAddress server(35,206,99,222);  // numeric IP (no DNS)
+//char server[] = "35.206.99.222";    // name address (using DNS)
 // Initialize the Ethernet client library
 // with the IP address and port of the server
 // that you want to connect to (port 80 is default for HTTP):
@@ -56,7 +63,7 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
-  
+
   pinMode(relayNeon1Pin, OUTPUT);
   pinMode(relayNeon2Pin, OUTPUT);
   pinMode(relayFanPin, OUTPUT);
@@ -67,21 +74,8 @@ void setup() {
   // In case of errors, please enable it
   // pinMode(4,OUTPUT);
 
-  setTime(1, 23, 00, 22, 3, 18); // set time (FIXME replace with a real time)
-
-  Alarm.alarmRepeat(1, 23, 20, enableNeons); // FIXME change to 7:30am
-  Alarm.alarmRepeat(1, 24, 5, disableNeons); // FIXME change to 9:00pm
-
-  Alarm.timerRepeat(58, updateFan); // FIXME this should be every 15 minutes
-  Alarm.timerRepeat(58, updateHumidifier); // FIXME this should be every 15 minutes
-  Alarm.timerRepeat(3, readDht);
-  Alarm.timerRepeat(3, readLight);
-
-  // force heater always on, because managed by an internal thermostat
-  digitalWrite(relayHeaterPin, HIGH);
-
   // enable SD SPI
-  digitalWrite(chipSelect, LOW);
+  //digitalWrite(chipSelect, LOW);
 
   // ------------------------------
   // ----------- SD card ----------
@@ -96,12 +90,12 @@ void setup() {
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
-  myFile = SD.open("test.txt", FILE_WRITE);
+  myFile = SD.open("data.txt", FILE_WRITE);
 
   // if the file opened okay, write to it:
   if (myFile) {
     Serial.print("Writing to test.txt...");
-    myFile.println("testing 1, 2, 3.");
+    myFile.println("-------Arduino restarted-------");
     // close the file:
     myFile.close();
     Serial.println("done.");
@@ -111,30 +105,30 @@ void setup() {
   }
 
   // re-open the file for reading:
-  myFile = SD.open("test.txt");
-  if (myFile) {
-    Serial.println("test.txt:");
-
-    // read from the file until there's nothing else in it:
-    while (myFile.available()) {
-      Serial.write(myFile.read());
-    }
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    Serial.println("error opening test.txt");
-  }
+//  myFile = SD.open("test.txt");
+//  if (myFile) {
+//    Serial.println("test.txt:");
+//
+//    // read from the file until there's nothing else in it:
+//    while (myFile.available()) {
+//      Serial.write(myFile.read());
+//    }
+//    // close the file:
+//    myFile.close();
+//  } else {
+//    // if the file didn't open, print an error:
+//    Serial.println("error opening test.txt");
+//  }
   // ------------------------------
   // ------------------------------
   // ------------------------------
 
   // disable SD SPI
-  digitalWrite(chipSelect, HIGH);
+  // digitalWrite(chipSelect, HIGH);
 
-  // ------------------------------
-  // ----------- Wifi -------------
-  // ------------------------------
+  // --------------------------------------------------------------------
+  // ---------------- wifi + json rest api to remote server -------------
+  // --------------------------------------------------------------------
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     Serial.println("WiFi shield not present");
@@ -143,34 +137,95 @@ void setup() {
   }
 
   // attempt to connect to WiFi network:
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to WPA SSID: ");
+  while (status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
-    // Connect to WPA/WPA2 network:
+    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
 
     // wait 10 seconds for connection:
     delay(10000);
   }
+  Serial.println("Connected to wifi");
+  printWiFiStatus();
 
-  // you're connected now, so print out the data:
-  Serial.print("You're connected to the network");
-  printCurrentNet();
-  printWiFiData();
   Serial.println("\nStarting connection to server...");
-  // if you get a connection, report back via serial:
-  char server[] = "http://api.openweathermap.org";
-  if (client.connect(server, 80)) {
-    Serial.println("connected to server");
-    // Make a HTTP request:
-    client.println("GET /data/2.5/weather?q=paderno&APPID=7c15db211783f681d69a8b0a46913857 HTTP/1.1");
-    client.println("Host: api.openweathermap.org");
-    client.println("Connection: close");
-    client.println();
+  
+  if (!client.connect(server, 80)) {
+    Serial.println("Connection failed");
+    return;
   }
+
+  Serial.println("Connected!");
+  
+  // Make a HTTP request:
+  client.println("GET /api/keepAlive HTTP/1.1");
+  client.println("Host: 35.206.99.222");
+  client.println("Connection: close");
+
+  if (client.println() == 0) {
+    Serial.println("Failed to send request");
+    return;
+  }
+
+  // Check HTTP status
+  char status[32] = {0};
+  client.readBytesUntil('\r', status, sizeof(status));
+  if (strcmp(status, "HTTP/1.1 200 OK") != 0) {
+    Serial.print("Unexpected response: ");
+    Serial.println(status);
+    return;
+  }
+
+  // Skip HTTP headers
+  char endOfHeaders[] = "\r\n\r\n";
+  if (!client.find(endOfHeaders)) {
+    Serial.println("Invalid response");
+    return;
+  }
+
+
+  // Allocate JsonBuffer
+  // Use arduinojson.org/assistant to compute the capacity.
+  const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
+  DynamicJsonBuffer jsonBuffer(capacity);
+
+  // Parse JSON object
+  JsonObject& root = jsonBuffer.parseObject(client);
+  if (!root.success()) {
+    Serial.println("Parsing failed!");
+    return;
+  }
+
+  // Extract values
+  Serial.println("Response:");
+  Serial.println(root["year"].as<char*>());
+  Serial.println(root["month"].as<char*>());
+  Serial.println(root["day"].as<char*>());
+  Serial.println(root["hours"].as<char*>());
+  Serial.println(root["minutes"].as<char*>());
+  Serial.println(root["seconds"].as<char*>());
+  Serial.println(root["offset"].as<char*>());
+
+  // Disconnect
+  client.stop();
   // ------------------------------
   // ------------------------------
   // ------------------------------
+
+  setTime(root["hours"], root["minutes"], root["seconds"],
+    root["day"], root["month"], root["year"]); // set time (FIXME replace with a real time)
+
+  Alarm.alarmRepeat(1, 23, 20, enableNeons); // FIXME change to 7:30am
+  Alarm.alarmRepeat(1, 24, 5, disableNeons); // FIXME change to 9:00pm
+
+  Alarm.timerRepeat(58, updateFan); // FIXME this should be every 15 minutes
+  Alarm.timerRepeat(58, updateHumidifier); // FIXME this should be every 15 minutes
+  Alarm.timerRepeat(3, readDht);
+  Alarm.timerRepeat(3, readLight);
+
+  // force heater always on, because managed by an internal thermostat
+  digitalWrite(relayHeaterPin, HIGH);
 }
 
 void loop() {
@@ -178,13 +233,14 @@ void loop() {
   Alarm.delay(1000); // wait one second between clock display
 
   // ----------- Wifi -------------
-  printCurrentNet();
+  // printCurrentNet();
 }
 
 void readLight() {
   lightValue = analogRead(lightSensorPin);
   Serial.print("Value light: \t");
-  Serial.println(lightValue); // ????
+  Serial.println(lightValue);
+  // writeToSdCard(String("Value light: ") + lightValue);
 }
 
 void readDht() {
@@ -198,26 +254,38 @@ void readDht() {
   Serial.print("%,\t");
   Serial.print(DHT.temperature, 1);
   Serial.println("°C");
+
+  //  String dataToWrite;
+  //  dataToWrite.concat("DHT humidifier");
+  //  dataToWrite.concat(DHT.humidity);
+  //  dataToWrite.concat("%, ");
+  //  dataToWrite.concat(DHT.temperature);
+  //  dataToWrite.concat("°C");
+  //  writeToSdCard(dataToWrite);
 }
 
 void enableNeons() {
   digitalWrite(relayNeon1Pin, HIGH);
   digitalWrite(relayNeon2Pin, HIGH);
+  writeToSdCard("Neons enabled");
 }
 
 void disableNeons() {
   digitalWrite(relayNeon1Pin, LOW);
   digitalWrite(relayNeon2Pin, LOW);
+  writeToSdCard("Neons disabled");
 }
 
 void updateFan() {
   if (relayFanToggle == true) {
     digitalWrite(relayFanPin, LOW);
     relayFanToggle = false;
+    writeToSdCard("Update fan true");
   }
   else {
     relayFanToggle = true;
     digitalWrite(relayFanPin, HIGH);
+    writeToSdCard("Update fan false");
   }
 }
 
@@ -225,10 +293,12 @@ void updateHumidifier() {
   if (relayHumidifierToggle == true) {
     digitalWrite(relayHumidifierPin, LOW);
     relayHumidifierToggle = false;
+    writeToSdCard("Update humidifier false");
   }
   else {
     relayHumidifierToggle = true;
     digitalWrite(relayHumidifierPin, HIGH);
+    writeToSdCard("Update humidifier true");
   }
 }
 
@@ -251,61 +321,77 @@ void printDigits(int digits) {
 // ------------------------------
 // ----------- Wifi -------------
 // ------------------------------
-void printWiFiData() {
-  // print your WiFi shield's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
-  Serial.println(ip);
-
-  // print your MAC address:
-  byte mac[6];
-  WiFi.macAddress(mac);
-  Serial.print("MAC address: ");
-  Serial.print(mac[5], HEX);
-  Serial.print(":");
-  Serial.print(mac[4], HEX);
-  Serial.print(":");
-  Serial.print(mac[3], HEX);
-  Serial.print(":");
-  Serial.print(mac[2], HEX);
-  Serial.print(":");
-  Serial.print(mac[1], HEX);
-  Serial.print(":");
-  Serial.println(mac[0], HEX);
-}
-void printCurrentNet() {
+void printWiFiStatus() {
   // print the SSID of the network you're attached to:
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
 
-  // print the MAC address of the router you're attached to:
-  byte bssid[6];
-  WiFi.BSSID(bssid);
-  Serial.print("BSSID: ");
-  Serial.print(bssid[5], HEX);
-  Serial.print(":");
-  Serial.print(bssid[4], HEX);
-  Serial.print(":");
-  Serial.print(bssid[3], HEX);
-  Serial.print(":");
-  Serial.print(bssid[2], HEX);
-  Serial.print(":");
-  Serial.print(bssid[1], HEX);
-  Serial.print(":");
-  Serial.println(bssid[0], HEX);
+  // print your WiFi shield's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
 
   // print the received signal strength:
   long rssi = WiFi.RSSI();
   Serial.print("signal strength (RSSI):");
-  Serial.println(rssi);
-
-  // print the encryption type:
-  byte encryption = WiFi.encryptionType();
-  Serial.print("Encryption Type:");
-  Serial.println(encryption, HEX);
-  Serial.println();
+  Serial.print(rssi);
+  Serial.println(" dBm");
 }
+//void printWiFiData() {
+//  // print your WiFi shield's IP address:
+//  IPAddress ip = WiFi.localIP();
+//  Serial.print("IP Address: ");
+//  Serial.println(ip);
+//  Serial.println(ip);
+//
+//  // print your MAC address:
+//  byte mac[6];
+//  WiFi.macAddress(mac);
+//  Serial.print("MAC address: ");
+//  Serial.print(mac[5], HEX);
+//  Serial.print(":");
+//  Serial.print(mac[4], HEX);
+//  Serial.print(":");
+//  Serial.print(mac[3], HEX);
+//  Serial.print(":");
+//  Serial.print(mac[2], HEX);
+//  Serial.print(":");
+//  Serial.print(mac[1], HEX);
+//  Serial.print(":");
+//  Serial.println(mac[0], HEX);
+//}
+//void printCurrentNet() {
+//  // print the SSID of the network you're attached to:
+//  Serial.print("SSID: ");
+//  Serial.println(WiFi.SSID());
+//
+//  // print the MAC address of the router you're attached to:
+//  byte bssid[6];
+//  WiFi.BSSID(bssid);
+//  Serial.print("BSSID: ");
+//  Serial.print(bssid[5], HEX);
+//  Serial.print(":");
+//  Serial.print(bssid[4], HEX);
+//  Serial.print(":");
+//  Serial.print(bssid[3], HEX);
+//  Serial.print(":");
+//  Serial.print(bssid[2], HEX);
+//  Serial.print(":");
+//  Serial.print(bssid[1], HEX);
+//  Serial.print(":");
+//  Serial.println(bssid[0], HEX);
+//
+//  // print the received signal strength:
+//  long rssi = WiFi.RSSI();
+//  Serial.print("signal strength (RSSI):");
+//  Serial.println(rssi);
+//
+//  // print the encryption type:
+//  byte encryption = WiFi.encryptionType();
+//  Serial.print("Encryption Type:");
+//  Serial.println(encryption, HEX);
+//  Serial.println();
+//}
 // ------------------------------
 // ------------------------------
 // ------------------------------
@@ -375,6 +461,51 @@ void getSdCardData() {
   Serial.println(volumesize);
   Serial.print("Volume size (Gb):  ");
   Serial.println((float)volumesize / 1024.0);
+}
+
+void writeToSdCard(String message) {
+  Serial.println("writing to sdcard");
+
+  // enable SD SPI
+  digitalWrite(chipSelect, LOW);
+
+  while (!SD.begin(chipSelect)) {
+    Serial.println("initialization sdcard failed!");
+    delay(1000);
+    // while (1);
+  }
+
+  // open the file. note that only one file can be open at a time,
+  // so you have to close this one before opening another.
+  myFile = SD.open("data.txt", FILE_WRITE);
+
+  // if the file opened okay, write to it:
+  if (myFile) {
+    Serial.print("Writing to test.txt...");
+    myFile.println(message);
+    // close the file:
+    myFile.close();
+    Serial.println("done.");
+  } else {
+    // if the file didn't open, print an error:
+    Serial.println("error opening test.txt");
+  }
+
+  //  // re-open the file for reading:
+  //  myFile = SD.open("data.txt");
+  //  if (myFile) {
+  //    Serial.println("data.txt:");
+  //
+  //    // read from the file until there's nothing else in it:
+  //    while (myFile.available()) {
+  //      Serial.write(myFile.read());
+  //    }
+  //    // close the file:
+  //    myFile.close();
+  //  } else {
+  //    // if the file didn't open, print an error:
+  //    Serial.println("error opening data.txt");
+  // }
 }
 // ------------------------------
 // ------------------------------

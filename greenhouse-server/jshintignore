@@ -1,0 +1,7 @@
+bin
+docs
+node_modules
+public
+spec
+coverage
+.nyc_output

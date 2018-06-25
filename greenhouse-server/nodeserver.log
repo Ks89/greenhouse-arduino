@@ -1,0 +1,253 @@
+1522622984808 WARN Starting with NODE_ENV=development
+1522622984809 WARN config.CI is yes and isCI is false
+1522622984993 WARN Initializing helmet
+1522622984996 WARN Initializing hpp
+1522622984997 WARN Initializing passportjs
+1522622984997 WARN Initializing REST apis and CSRF
+1522622985000 WARN [SECURITY] Initializing ratelimit
+1522623024810 WARN Starting with NODE_ENV=development
+1522623024812 WARN config.CI is yes and isCI is false
+1522623025003 WARN Initializing helmet
+1522623025006 WARN Initializing hpp
+1522623025007 WARN Initializing passportjs
+1522623025007 WARN Initializing REST apis and CSRF
+1522623025010 WARN [SECURITY] Initializing ratelimit
+1522623033756 WARN Starting with NODE_ENV=development
+1522623033757 WARN config.CI is yes and isCI is false
+1522623033966 WARN Initializing helmet
+1522623033969 WARN Initializing hpp
+1522623033970 WARN Initializing passportjs
+1522623033970 WARN Initializing REST apis and CSRF
+1522623033974 WARN [SECURITY] Initializing ratelimit
+1522623057031 WARN Starting with NODE_ENV=development
+1522623057033 WARN config.CI is yes and isCI is false
+1522623057618 WARN Initializing helmet
+1522623057628 WARN Initializing hpp
+1522623057629 WARN Initializing passportjs
+1522623057630 WARN Initializing REST apis and CSRF
+1522623057640 WARN [SECURITY] Initializing ratelimit
+1522623203424 WARN Starting with NODE_ENV=development
+1522623203426 WARN config.CI is yes and isCI is false
+1522623203606 WARN Initializing helmet
+1522623203609 WARN Initializing hpp
+1522623203609 WARN Initializing passportjs
+1522623203610 WARN Initializing REST apis and CSRF
+1522623203613 WARN [SECURITY] Initializing ratelimit
+1522623227184 WARN Starting with NODE_ENV=development
+1522623227191 WARN config.CI is yes and isCI is false
+1522623227832 WARN Initializing helmet
+1522623227837 WARN Initializing hpp
+1522623227838 WARN Initializing passportjs
+1522623227838 WARN Initializing REST apis and CSRF
+1522623227844 WARN [SECURITY] Initializing ratelimit
+1522623290718 WARN Starting with NODE_ENV=development
+1522623290720 WARN config.CI is yes and isCI is false
+1522623290948 WARN Initializing helmet
+1522623290952 WARN Initializing hpp
+1522623290953 WARN Initializing passportjs
+1522623290953 WARN Initializing REST apis and CSRF
+1522623290957 WARN [SECURITY] Initializing ratelimit
+1522623292119 ERROR uncaughtException: done is not a function
+	{"date":"Mon Apr 02 2018 00:54:52 GMT+0200 (CEST)","process":{"pid":38038,"uid":501,"gid":20,"cwd":"/Users/ks89/git/angular-cli-skeleton/node-express-server","execPath":"/usr/local/bin/node","version":"v9.8.0","argv":["/usr/local/bin/node","/Users/ks89/git/angular-cli-skeleton/node-express-server/bin/www"],"memoryUsage":{"rss":44843008,"heapTotal":24018944,"heapUsed":18374984,"external":256371}},"os":{"loadavg":[2.12890625,1.86376953125,1.72314453125],"uptime":254448},"trace":[{"column":22,"file":"/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/express/lib/response.js","function":null,"line":430,"method":null,"native":false},{"column":5,"file":"/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/express/lib/response.js","function":"SendStream.ondirectory","line":1033,"method":"ondirectory","native":false},{"column":13,"file":"events.js","function":"SendStream.emit","line":180,"method":"emit","native":false},{"column":10,"file":"/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/send/index.js","function":"SendStream.redirect","line":479,"method":"redirect","native":false},{"column":41,"file":"/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/send/index.js","function":"onstat","line":728,"method":null,"native":false},{"column":5,"file":"fs.js","function":"FSReqWrap.oncomplete","line":171,"method":"oncomplete","native":false}],"stack":["TypeError: done is not a function","    at /Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/express/lib/response.js:430:22","    at SendStream.ondirectory (/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/express/lib/response.js:1033:5)","    at SendStream.emit (events.js:180:13)","    at SendStream.redirect (/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/send/index.js:479:10)","    at onstat (/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/send/index.js:728:41)","    at FSReqWrap.oncomplete (fs.js:171:5)"]}
+1522623293479 ERROR uncaughtException: done is not a function
+	{"date":"Mon Apr 02 2018 00:54:53 GMT+0200 (CEST)","process":{"pid":38038,"uid":501,"gid":20,"cwd":"/Users/ks89/git/angular-cli-skeleton/node-express-server","execPath":"/usr/local/bin/node","version":"v9.8.0","argv":["/usr/local/bin/node","/Users/ks89/git/angular-cli-skeleton/node-express-server/bin/www"],"memoryUsage":{"rss":44916736,"heapTotal":24018944,"heapUsed":18731888,"external":256395}},"os":{"loadavg":[2.2783203125,1.89892578125,1.736328125],"uptime":254449},"trace":[{"column":22,"file":"/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/express/lib/response.js","function":null,"line":430,"method":null,"native":false},{"column":5,"file":"/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/express/lib/response.js","function":"SendStream.ondirectory","line":1033,"method":"ondirectory","native":false},{"column":13,"file":"events.js","function":"SendStream.emit","line":180,"method":"emit","native":false},{"column":10,"file":"/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/send/index.js","function":"SendStream.redirect","line":479,"method":"redirect","native":false},{"column":41,"file":"/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/send/index.js","function":"onstat","line":728,"method":null,"native":false},{"column":5,"file":"fs.js","function":"FSReqWrap.oncomplete","line":171,"method":"oncomplete","native":false}],"stack":["TypeError: done is not a function","    at /Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/express/lib/response.js:430:22","    at SendStream.ondirectory (/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/express/lib/response.js:1033:5)","    at SendStream.emit (events.js:180:13)","    at SendStream.redirect (/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/send/index.js:479:10)","    at onstat (/Users/ks89/git/angular-cli-skeleton/node-express-server/node_modules/send/index.js:728:41)","    at FSReqWrap.oncomplete (fs.js:171:5)"]}
+1522623310038 WARN Starting with NODE_ENV=development
+1522623310049 WARN config.CI is yes and isCI is false
+1522623310466 WARN Initializing helmet
+1522623310470 WARN Initializing hpp
+1522623310471 WARN Initializing passportjs
+1522623310471 WARN Initializing REST apis and CSRF
+1522623310476 WARN [SECURITY] Initializing ratelimit
+1522623341205 WARN Starting with NODE_ENV=development
+1522623341207 WARN config.CI is yes and isCI is false
+1522623341579 WARN Initializing helmet
+1522623341583 WARN Initializing hpp
+1522623341584 WARN Initializing passportjs
+1522623341584 WARN Initializing REST apis and CSRF
+1522623341589 WARN [SECURITY] Initializing ratelimit
+1522623372172 WARN Starting with NODE_ENV=development
+1522623372173 WARN config.CI is yes and isCI is false
+1522623372465 WARN Initializing helmet
+1522623372469 WARN Initializing hpp
+1522623372470 WARN Initializing passportjs
+1522623372471 WARN Initializing REST apis and CSRF
+1522623372475 WARN [SECURITY] Initializing ratelimit
+1522623512371 WARN Starting with NODE_ENV=development
+1522623512373 WARN config.CI is yes and isCI is false
+1522623512572 WARN Initializing helmet
+1522623512577 WARN Initializing hpp
+1522623512577 WARN Initializing passportjs
+1522623512578 WARN Initializing REST apis and CSRF
+1522623512584 WARN [SECURITY] Initializing ratelimit
+1522623554864 WARN Starting with NODE_ENV=development
+1522623554865 WARN config.CI is yes and isCI is false
+1522623555046 WARN Initializing helmet
+1522623555048 WARN Initializing hpp
+1522623555048 WARN Initializing passportjs
+1522623555049 WARN Initializing REST apis and CSRF
+1522623555052 WARN [SECURITY] Initializing ratelimit
+1522623646184 WARN Starting with NODE_ENV=development
+1522623646186 WARN config.CI is yes and isCI is false
+1522623646635 WARN Initializing helmet
+1522623646641 WARN Initializing hpp
+1522623646642 WARN Initializing passportjs
+1522623646643 WARN Initializing REST apis and CSRF
+1522623646662 WARN [SECURITY] Initializing ratelimit
+1522623831647 WARN Starting with NODE_ENV=development
+1522623831649 WARN config.CI is yes and isCI is false
+1522623831834 WARN Initializing helmet
+1522623831837 WARN Initializing hpp
+1522623831838 WARN Initializing passportjs
+1522623831838 WARN Initializing REST apis and CSRF
+1522623831841 WARN [SECURITY] Initializing ratelimit
+1522623893559 WARN Starting with NODE_ENV=development
+1522623893560 WARN config.CI is yes and isCI is false
+1522623893748 WARN Initializing helmet
+1522623893751 WARN Initializing hpp
+1522623893751 WARN Initializing passportjs
+1522623893752 WARN Initializing REST apis and CSRF
+1522623893756 WARN [SECURITY] Initializing ratelimit
+1522624089184 WARN Starting with NODE_ENV=development
+1522624089185 WARN config.CI is yes and isCI is false
+1522624089375 WARN Initializing helmet
+1522624089379 WARN Initializing hpp
+1522624089379 WARN Initializing passportjs
+1522624089380 WARN Initializing REST apis and CSRF
+1522624089383 WARN [SECURITY] Initializing ratelimit
+1522624097435 WARN Starting with NODE_ENV=development
+1522624097437 WARN config.CI is yes and isCI is false
+1522624097651 WARN Initializing helmet
+1522624097654 WARN Initializing hpp
+1522624097654 WARN Initializing passportjs
+1522624097655 WARN Initializing REST apis and CSRF
+1522624097658 WARN [SECURITY] Initializing ratelimit
+1522624140291 WARN Starting with NODE_ENV=development
+1522624140292 WARN config.CI is yes and isCI is false
+1522624140540 WARN Initializing helmet
+1522624140543 WARN Initializing hpp
+1522624140544 WARN Initializing passportjs
+1522624140544 WARN Initializing REST apis and CSRF
+1522624140548 WARN [SECURITY] Initializing ratelimit
+1522624141252 DEBUG REST auth login - logging in
+1522624141297 DEBUG REST secret
+1522624235130 DEBUG REST secret
+1522624244623 DEBUG REST auth logout - logging out
+1522624252646 DEBUG REST auth login - logging in
+1522624252658 DEBUG REST secret
+1522625235207 WARN Starting with NODE_ENV=development
+1522625235209 WARN config.CI is yes and isCI is false
+1522625235430 WARN Initializing helmet
+1522625235434 WARN Initializing hpp
+1522625235435 WARN Initializing passportjs
+1522625235435 WARN Initializing REST apis and CSRF
+1522625235440 WARN [SECURITY] Initializing ratelimit
+1522625238063 ERROR cannot find previous login in tokens with payload
+	{"id":2,"exp":1522627852646,"iat":1522624252}
+1522625240131 ERROR cannot find previous login in tokens with payload
+	{"id":2,"exp":1522627852646,"iat":1522624252}
+1522625243421 ERROR cannot find previous login in tokens with payload
+	{"id":2,"exp":1522627852646,"iat":1522624252}
+1522625380756 WARN Starting with NODE_ENV=development
+1522625380757 WARN config.CI is yes and isCI is false
+1522625380997 WARN Initializing helmet
+1522625381001 WARN Initializing hpp
+1522625381001 WARN Initializing passportjs
+1522625381002 WARN Initializing REST apis and CSRF
+1522625381005 WARN [SECURITY] Initializing ratelimit
+1522625382159 ERROR cannot find previous login in tokens with payload
+	{"id":2,"exp":1522627852646,"iat":1522624252}
+1522625472528 WARN Starting with NODE_ENV=development
+1522625472529 WARN config.CI is yes and isCI is false
+1522625472793 WARN Initializing helmet
+1522625472796 WARN Initializing hpp
+1522625472796 WARN Initializing passportjs
+1522625472797 WARN Initializing REST apis and CSRF
+1522625472800 WARN [SECURITY] Initializing ratelimit
+1522625473916 ERROR cannot find previous login in tokens with payload
+	{"id":2,"exp":1522627852646,"iat":1522624252}
+1522625475597 ERROR cannot find previous login in tokens with payload
+	{"id":2,"exp":1522627852646,"iat":1522624252}
+1522625477529 ERROR cannot find previous login in tokens with payload
+	{"id":2,"exp":1522627852646,"iat":1522624252}
+1522625485500 DEBUG REST auth login - logging in
+1522625485527 DEBUG REST secret
+1522625565205 WARN Starting with NODE_ENV=development
+1522625565206 WARN config.CI is yes and isCI is false
+1522625565417 WARN Initializing helmet
+1522625565421 WARN Initializing hpp
+1522625565422 WARN Initializing passportjs
+1522625565422 WARN Initializing REST apis and CSRF
+1522625565426 WARN [SECURITY] Initializing ratelimit
+1522625566948 ERROR cannot find previous login in tokens with payload
+	{"id":1,"exp":1522629085501,"iat":1522625485}
+1522625574882 ERROR cannot find previous login in tokens with payload
+	{"id":1,"exp":1522629085501,"iat":1522625485}
+1522625583040 DEBUG REST auth login - logging in
+1522625583091 DEBUG REST secret
+1522625591740 DEBUG REST secret
+1522628273727 WARN Starting with NODE_ENV=development
+1522628273729 WARN config.CI is yes and isCI is false
+1522628274014 WARN Initializing helmet
+1522628274018 WARN Initializing hpp
+1522628274018 WARN Initializing passportjs
+1522628274019 WARN Initializing REST apis and CSRF
+1522628274024 WARN [SECURITY] Initializing ratelimit
+1522707082520 WARN Starting with NODE_ENV=development
+1522707082521 WARN config.CI is yes and isCI is false
+1522707082875 WARN Initializing helmet
+1522707082878 WARN Initializing hpp
+1522707082879 WARN Initializing passportjs
+1522707082879 WARN Initializing REST apis and CSRF
+1522707082886 WARN [SECURITY] Initializing ratelimit
+1522707368463 WARN Starting with NODE_ENV=development
+1522707368464 WARN config.CI is yes and isCI is false
+1522707368692 WARN Initializing helmet
+1522707368696 WARN Initializing hpp
+1522707368697 WARN Initializing passportjs
+1522707368697 WARN Initializing REST apis and CSRF
+1522707368701 WARN [SECURITY] Initializing ratelimit
+1522707374108 ERROR cannot find previous login in tokens with payload
+	{"id":1,"exp":1522629183041,"iat":1522625583}
+1522707375057 ERROR cannot find previous login in tokens with payload
+	{"id":1,"exp":1522629183041,"iat":1522625583}
+1522708596280 WARN Starting with NODE_ENV=development
+1522708596281 WARN config.CI is yes and isCI is false
+1522708596492 WARN Initializing helmet
+1522708596495 WARN Initializing hpp
+1522708596496 WARN Initializing passportjs
+1522708596496 WARN Initializing REST apis and CSRF
+1522708596500 WARN [SECURITY] Initializing ratelimit
+1522708602972 WARN Starting with NODE_ENV=development
+1522708602974 WARN config.CI is yes and isCI is false
+1522708603228 WARN Initializing helmet
+1522708603233 WARN Initializing hpp
+1522708603233 WARN Initializing passportjs
+1522708603234 WARN Initializing REST apis and CSRF
+1522708603239 WARN [SECURITY] Initializing ratelimit
+1522708604567 WARN Starting with NODE_ENV=development
+1522708604569 WARN config.CI is yes and isCI is false
+1522708604833 WARN Initializing helmet
+1522708604837 WARN Initializing hpp
+1522708604838 WARN Initializing passportjs
+1522708604838 WARN Initializing REST apis and CSRF
+1522708604844 WARN [SECURITY] Initializing ratelimit
+1522709880726 WARN Starting with NODE_ENV=development
+1522709880727 WARN config.CI is yes and isCI is false
+1522709880934 WARN Initializing helmet
+1522709880938 WARN Initializing hpp
+1522709880939 WARN Initializing passportjs
+1522709880939 WARN Initializing REST apis and CSRF
+1522709880943 WARN [SECURITY] Initializing ratelimit
+1522709889031 DEBUG REST auth login - logging in
+1522709889072 DEBUG REST secret
+1522709890386 DEBUG REST auth logout - logging out
+1526413662798 WARN Starting with NODE_ENV=development
+1526413662800 WARN config.CI is yes and isCI is false
+1526413663010 WARN Initializing helmet
+1526413663014 WARN Initializing hpp
+1526413663014 WARN Initializing passportjs
+1526413663015 WARN Initializing REST apis and CSRF
+1526413663024 WARN [SECURITY] Initializing ratelimit
+1526413664635 DEBUG REST auth login - logging in
+1526413664700 DEBUG REST secret
+1526413666040 DEBUG REST auth logout - logging out
