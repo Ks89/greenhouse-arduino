@@ -31,7 +31,7 @@ module.exports = {
   EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET || 'keyboard cat',
   HELMET_HIDE_POWERED_BY: process.env.HELMET_HIDE_POWERED_BY || 'ks89',
   HELMET_REFERRER_POLICY: process.env.HELMET_REFERRER_POLICY || 'no-referrer',
-  HELMET_EXPECT_CT_REPORT_URI: process.env.HELMET_EXPECT_CT_REPORT_URI || 'https://angularcliexample.com/expect-ct-report',
+  HELMET_EXPECT_CT_REPORT_URI: process.env.HELMET_EXPECT_CT_REPORT_URI || 'https://stefanocappa.it/expect-ct-report',
 
   // rate limiter for all APIs
   RATELIMITER_WINDOW_MS: process.env.RATELIMITER_WINDOW_MS || 60 * 60 * 1000, // by default 15 minutes

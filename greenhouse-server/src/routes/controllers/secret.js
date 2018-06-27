@@ -4,5 +4,16 @@ const logger = require('../../logger');
 
 module.exports.secret = (req, res) => {
   logger.debug('REST secret');
-  res.json({ message: 'This is a secret message from an authenticated rest API' });
+
+  const date = new Date();
+
+  res.json({
+    year: date.getUTCFullYear(),
+    month: date.getUTCMonth() + 1,
+    day: date.getUTCDay(),
+    hours: date.getUTCHours(),
+    minutes: date.getUTCMinutes(),
+    seconds: date.getUTCSeconds(),
+    offset: date.getTimezoneOffset()
+  });
 };
