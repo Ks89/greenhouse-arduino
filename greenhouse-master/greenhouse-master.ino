@@ -31,11 +31,11 @@ const int hourNeonDisable[] = {18, 45, 00}; // FIXME change to 9:00pm
 const int fanReadValDelay = 58; // seconds
 const int humidifierReadValDelay = 58; // seconds
 const int dhtReadValDelay = 3; // seconds
-const int lightReadValDelay = 3; // seconds
-const int moistureReadValDelay = 10; // seconds
+const int othersReadValDelay = 3; // seconds
 // -------------------------------------------------------
 // ---------------------- others -------------------------
 const int serverPort = 80;
+const int serverIp[4] = {35, 206, 99, 222};
 // -------------------------------------------------------
 // -------------------------------------------------------
 
@@ -55,7 +55,7 @@ int keyIndex = 0;            // your network key Index number (needed only for W
 int status = WL_IDLE_STATUS;
 // if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
-IPAddress server(35,206,99,222);  // numeric IP (no DNS)
+IPAddress server(serverIp[0],serverIp[1],serverIp[2],serverIp[3]);  // numeric IP (no DNS)
 //char server[] = "35.206.99.222";    // name address (using DNS)
 // Initialize the Ethernet client library
 // with the IP address and port of the server
@@ -177,7 +177,9 @@ void setup() {
   
   // Make a HTTP request:
   client.println("GET /api/keepAlive HTTP/1.1");
-  client.println("Host: 35.206.99.222");
+  // String hostPrefix = "Host: ";
+  // String host = host + serverIp[0] + "." + serverIp[1] + "." + serverIp[2] + "." + serverIp[3];
+  //client.println("Host: 35.206.99.222");
   client.println("Connection: close");
 
   if (client.println() == 0) {
@@ -239,8 +241,7 @@ void setup() {
   Alarm.timerRepeat(fanReadValDelay, updateFan); // FIXME this should be every 15 minutes
   Alarm.timerRepeat(humidifierReadValDelay, updateHumidifier); // FIXME this should be every 15 minutes
   Alarm.timerRepeat(dhtReadValDelay, readDht);
-  Alarm.timerRepeat(lightReadValDelay, readLight);
-  Alarm.timerRepeat(moistureReadValDelay, readMoisture);
+  Alarm.timerRepeat(othersReadValDelay, readOthers);
 
   // force heater always on, because managed by an internal thermostat
   digitalWrite(relayHeaterPin, HIGH);
@@ -254,18 +255,14 @@ void loop() {
   // printCurrentNet();
 }
 
-void readLight() {
+void readOthers() {
   lightValue = analogRead(lightSensorPin);
   Serial.print("Value light: \t");
   Serial.println(lightValue);
-  // writeToSdCard(String("Value light: ") + lightValue);
-}
-
-void readMoisture() {
   moistureValue = analogRead(moistureSensorPin);
   Serial.print("Value moisture: \t");
   Serial.println(moistureValue);
-  // writeToSdCard(String("Value moisture: ") + moistureValue);
+  // writeToSdCard(String("Value light: ") + lightValue);
 }
 
 void readDht() {
